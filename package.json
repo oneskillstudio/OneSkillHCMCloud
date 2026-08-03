@@ -1,0 +1,23 @@
+{
+  "name": "abhishekmohantyhcmcloud",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Oracle HCM Cloud blog by Abhishek Mohanty — Fast Formulas, Absence Management, Time and Labor, Redwood, OTBI",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.7",
+    "@astrojs/sitemap": "^3.2.1",
+    "astro": "^4.16.7",
+    "rehype-raw": "^7.0.0"
+  },
+  "allowScripts": {
+    "esbuild@0.21.5": true,
+    "sharp@0.33.5": true
+  }
+}
