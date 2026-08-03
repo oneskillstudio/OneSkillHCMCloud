@@ -1,0 +1,178 @@
+---
+const EMAIL = 'abhishek.mohantyoracle@gmail.com';
+
+const MODULES = [
+  'Fast Formula',
+  'Absence',
+  'Time & Labor',
+  'HDL',
+  'BI Publisher',
+  'OTBI',
+  'SQL',
+  'OIC',
+];
+---
+
+<aside class="tcta" aria-labelledby="tcta-heading">
+  <div class="tcta-inner">
+    <p class="tcta-flag">Training &amp; Support</p>
+
+    <h2 id="tcta-heading">Stuck on something like this in your own instance?</h2>
+
+    <p class="tcta-lead">
+      I run training and one-to-one support on Fast Formula, Absence, Time &amp; Labor,
+      HDL, BI Publisher, OTBI, SQL and OIC — plus quarterly Oracle update impact reviews.
+      Built from production rollouts, not courseware.
+    </p>
+
+    <p class="tcta-sublabel">Key modules &amp; tools</p>
+
+    <div class="tcta-row">
+      <ul class="tcta-chips">
+        {MODULES.map((m) => <li>{m}</li>)}
+      </ul>
+
+      <span class="tcta-div" aria-hidden="true"></span>
+
+      <a class="tcta-prep" href="/training#interview">Interview Prep</a>
+    </div>
+
+    <div class="tcta-actions">
+      <a class="tcta-btn" href="/training">See what's covered <span aria-hidden="true">&#8594;</span></a>
+
+      <a class="tcta-mail" href={`mailto:${EMAIL}`}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m2 7 10 6 10-6"></path>
+        </svg>
+        <span>{EMAIL}</span>
+      </a>
+    </div>
+  </div>
+</aside>
+
+<style>
+  .tcta {
+    position: relative;
+    margin: 3rem 0 1rem;
+    background: linear-gradient(155deg, #12304E 0%, #16395C 48%, #1B4166 100%);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 18px;
+    overflow: hidden;
+    color: #E9EFF6;
+  }
+  .tcta::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(90deg, #E8721A 0%, #F58220 50%, #E8721A 100%);
+    z-index: 2;
+  }
+  .tcta::after {
+    content: '';
+    position: absolute;
+    right: -140px;
+    bottom: -180px;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(120,170,220,.16), transparent 66%);
+    pointer-events: none;
+  }
+
+  .tcta-inner { position: relative; z-index: 1; padding: 30px 34px 28px; }
+
+  .tcta-flag {
+    font-size: 11px; font-weight: 700; letter-spacing: .18em;
+    text-transform: uppercase; color: #9DB4CC; margin: 0 0 14px;
+  }
+
+  .tcta h2 {
+    font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+    font-weight: 700; letter-spacing: -.03em; line-height: 1.2;
+    color: #FFFFFF; margin: 0 0 14px;
+  }
+
+  .tcta-lead {
+    font-size: .92rem; line-height: 1.68; color: #C3D3E2;
+    margin: 0 0 22px; max-width: 68ch;
+  }
+
+  .tcta-sublabel {
+    font-size: 10.5px; font-weight: 700; letter-spacing: .16em;
+    text-transform: uppercase; color: #9DB4CC; margin: 0 0 12px;
+  }
+
+  .tcta-row {
+    display: flex; align-items: center; gap: 20px;
+    flex-wrap: wrap; margin-bottom: 24px;
+  }
+
+  .tcta-chips {
+    display: grid; grid-template-columns: repeat(4, minmax(0, auto));
+    gap: 9px; list-style: none; margin: 0; padding: 0;
+  }
+  .tcta-chips li {
+    font-size: 12.5px; font-weight: 700; letter-spacing: -.005em;
+    color: #FFFFFF; background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.13); border-radius: 999px;
+    padding: 9px 17px; text-align: center; white-space: nowrap;
+  }
+
+  .tcta-div {
+    width: 1px; align-self: stretch; min-height: 54px;
+    background: rgba(255,255,255,.16);
+  }
+
+  .tcta-prep {
+    display: inline-flex; align-items: center;
+    font-size: 12px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: #5BD3CB; text-decoration: none;
+    background: rgba(91,211,203,.07);
+    border: 1.5px solid rgba(91,211,203,.55);
+    border-radius: 999px; padding: 10px 20px; white-space: nowrap;
+    transition: background .18s ease, border-color .18s ease, color .18s ease;
+  }
+  .tcta-prep:hover {
+    background: rgba(91,211,203,.16); border-color: #5BD3CB; color: #8FE6E0;
+  }
+
+  .tcta-actions { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+
+  .tcta-btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: #F58220; color: #FFFFFF;
+    font-size: 13.5px; font-weight: 700; letter-spacing: -.01em;
+    text-decoration: none; padding: 13px 26px; border-radius: 999px;
+    transition: background .18s ease, transform .18s ease;
+  }
+  .tcta-btn:hover { background: #FF9438; transform: translateY(-1px); }
+
+  .tcta-mail {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 13px; color: #C3D3E2; text-decoration: none;
+    word-break: break-all; transition: color .18s ease;
+  }
+  .tcta-mail svg {
+    width: 17px; height: 17px; flex-shrink: 0;
+    color: #8FA9C4; transition: color .18s ease;
+  }
+  .tcta-mail:hover, .tcta-mail:hover svg { color: #FFB870; }
+
+  @media (max-width: 760px) {
+    .tcta-chips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tcta-div { display: none; }
+    .tcta-row { gap: 14px; }
+  }
+  @media (max-width: 520px) {
+    .tcta-inner { padding: 24px 20px 22px; }
+    .tcta { border-radius: 14px; }
+    .tcta-btn { width: 100%; justify-content: center; }
+    .tcta-mail { width: 100%; font-size: 12.5px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tcta-btn, .tcta-prep, .tcta-mail, .tcta-mail svg { transition: none; }
+    .tcta-btn:hover { transform: none; }
+  }
+</style>

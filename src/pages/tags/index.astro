@@ -1,0 +1,58 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = await getCollection('posts', ({ data }) => !data.draft);
+const tagCounts: Record<string, number> = {};
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+  }
+}
+const tags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
+---
+
+<BaseLayout title="Topics" description="Browse Oracle HCM Cloud notes by topic.">
+  <section class="container">
+    <div class="header">
+      <p class="eyebrow">Index</p>
+      <h1>Topics</h1>
+      <p class="lede">Every tag across the archive, weighted by post count.</p>
+    </div>
+    <ul class="tag-cloud">
+      {tags.map(([tag, count]) => (
+        <li>
+          <a href={`/tags/${tag.toLowerCase().replace(/\s+/g, '-')}`} class="tag">
+            {tag} <span class="count">{count}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    {tags.length === 0 && <p class="muted">No tags yet.</p>}
+  </section>
+</BaseLayout>
+
+<style>
+  section { padding-block: clamp(2.5rem, 5vw, 4rem); }
+  .header { margin-bottom: 3rem; max-width: 60ch; }
+  .lede {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--ink-muted);
+    margin: 1em 0 0;
+  }
+  .tag-cloud {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .count {
+    color: var(--ink-faint);
+    margin-left: 0.3em;
+    font-size: 0.85em;
+  }
+</style>

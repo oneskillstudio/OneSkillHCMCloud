@@ -1,0 +1,112 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import type { CollectionEntry } from 'astro:content';
+import TrainingCTA from '../components/TrainingCTA.astro';
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+const { post } = Astro.props;
+const { title, description, pubDate, updatedDate, tags } = post.data;
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const tagColor = (tag: string): string => {
+  const t = tag.toLowerCase();
+  if (t.includes('fast formula')) return 'red';
+  if (t.includes('null') || t.includes('default')) return 'orange';
+  if (t.includes('advanced') || t.includes('intermediate') || t.includes('beginner')) return 'navy';
+  return ['red', 'orange', 'navy', 'purple'][
+    t.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % 4
+  ];
+};
+---
+<BaseLayout title={title} description={description} ogType="article">
+  <article class="post">
+    <header class="post-header prose-container">
+      {tags.length > 0 && (
+        <div class="post-pills">
+          {tags.slice(0, 4).map((tag) => (
+            <span class={`pill pill-${tagColor(tag)}`}>{tag}</span>
+          ))}
+        </div>
+      )}
+      <h1>{title}</h1>
+      {description && <p class="lede">{description}</p>}
+      <div class="post-meta">
+        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+        <span class="dot">·</span>
+        <span>Oracle HCM Cloud</span>
+        {updatedDate && (
+          <>
+            <span class="dot">·</span>
+            <span>Updated {formatDate(updatedDate)}</span>
+          </>
+        )}
+      </div>
+    </header>
+    <div class="post-body prose-container">
+      <slot />
+    </div>
+    <div class="prose-container">
+      <TrainingCTA />
+    </div>
+    <footer class="post-footer prose-container">
+      <a href="/" class="back-link">← Back to all articles</a>
+    </footer>
+  </article>
+  <style>
+    .post {
+      padding-block: clamp(0.75rem, 1.5vw, 1.25rem);
+    }
+    .post-header {
+      margin-bottom: 0.75rem;
+    }
+    .post-pills {
+      margin-bottom: 0.5rem;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .post-header h1 {
+      font-size: clamp(1.15rem, 2vw, 1.6rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+      margin: 0 0 0.25em;
+    }
+    .lede {
+      font-family: var(--font-italic);
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--ink-muted);
+      line-height: 1.4;
+      margin: 0.3em 0 0.5em;
+      padding-left: 0.85rem;
+      border-left: 3px solid var(--red);
+      max-width: 60ch;
+    }
+    .post-meta {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--ink-faint);
+      padding-top: 0.6rem;
+      border-top: 1px solid var(--border);
+    }
+    .dot { margin: 0 0.5em; }
+    .post-body { font-size: 1.05rem; }
+    .post-footer {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .back-link {
+      font-family: var(--font-display);
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+      border: none;
+    }
+    .back-link:hover {
+      color: var(--orange);
+      border: none;
+    }
+  </style>
+</BaseLayout>
