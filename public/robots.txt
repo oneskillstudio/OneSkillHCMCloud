@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.abhishekmohantyhcmcloud.com/sitemap-index.xml
