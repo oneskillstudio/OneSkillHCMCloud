@@ -1,5 +1,5 @@
 ---
-title: "NEWWWWWWWWWWWWWWWWWOracle HCM Cloud Fast Formula: The 12-Tier OT Counter Cascade — Why the TCR Unrolls Instead of Loops"
+title: "NEWacle HCM Cloud Fast Formula: The 12-Tier OT Counter Cascade — Why the TCR Unrolls Instead of Loops"
 pubDate: 2026-07-31
 description: "Twelve sequential IF blocks, one per accumulated OT threshold, each firing its own recognition trigger. Why Fast Formula's variable-naming constraint forces the unrolled pattern, why a WHILE loop can't replace it, and what happens when the accumulator finally clears the top tier."
 tags: ["Fast Formula", "Oracle HCM Cloud", "Time & Labor"]
