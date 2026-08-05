@@ -148,8 +148,9 @@ A subset value set reuses an existing independent value set but limits it to a d
    - Default values
 ### Video Tutorial
 
-{% youtube 7RVR5lg6zf8 %}
-*[https://www.youtube.com/watch?v=7RVR5lg6zf8]* 
+<iframe width="100%" height="480" src="https://www.youtube.com/embed/7RVR5lg6zf8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+*[https://www.youtube.com/watch?v=7RVR5lg6zf8]*
 ---
  
 ## Value Set Security: Controlling User Access
