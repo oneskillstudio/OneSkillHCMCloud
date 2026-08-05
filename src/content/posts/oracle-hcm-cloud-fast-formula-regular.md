@@ -3,8 +3,9 @@ title: "Oracle HCM Cloud Fast Formula: Regular and OT Bucket Allocation in a TCR
 pubDate: 2026-07-02
 description: "Oracle HCM Cloud Fast Formula: Regular and OT Bucket Allocation in a TCR — The Day-Type Branch, the l_total Threshold Cascade, and the l_ot_counter..."
 tags: ["Fast Formula", "Oracle HCM Cloud", "Time & Labor"]
-author: "Abhishek Mohanty"
+author: "Vaibhav Chavan"
 draft: false
+category: "Functional"
 ---
 
 <div style="font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif; max-width: 820px; margin: 0 auto; color: #2d2926; line-height: 1.65; font-size: 17px;">
