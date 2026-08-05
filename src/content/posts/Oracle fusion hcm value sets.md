@@ -50,7 +50,7 @@ Value sets are administered centrally in the **Setup and Maintenance** work area
 - Managing the actual list of allowed values
 ---
  
-## ![Hero Image - Value Set Types](https://your-image-path.com/value-set-types-hero.png)
+## ![Hero Image - Value Set Types](/images/Posts/Oracle fusion hcm value sets/Oracle-Fusion-HCM-Value-Sets.png)
  
 ---
  
@@ -149,7 +149,7 @@ A subset value set reuses an existing independent value set but limits it to a d
 ### Video Tutorial
  
 {% youtube 7RVR5lg6zf8 %}
-*[Insert embedded video here - Example: https://www.youtube.com/watch?v=7RVR5lg6zf8]*
+*[https://www.youtube.com/watch?v=7RVR5lg6zf8]*
  
 ---
  
