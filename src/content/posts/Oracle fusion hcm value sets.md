@@ -50,7 +50,7 @@ Value sets are administered centrally in the **Setup and Maintenance** work area
 - Managing the actual list of allowed values
 ---
  
-![Hero Image - Value Set Types](/images/Posts/Oracle fusion hcm value sets/Oracle-Fusion-HCM-Value-Sets.png)
+![Hero Image - Value Set Types](/images/posts/oracle-fusion-hcm-value-sets/Oracle-Fusion-HCM-Value-Sets.png)
 
 ---
  
