@@ -50,8 +50,8 @@ Value sets are administered centrally in the **Setup and Maintenance** work area
 - Managing the actual list of allowed values
 ---
  
-## ![Hero Image - Value Set Types](/images/Posts/Oracle fusion hcm value sets/Oracle-Fusion-HCM-Value-Sets.png)
- 
+![Hero Image - Value Set Types](/images/Posts/Oracle fusion hcm value sets/Oracle-Fusion-HCM-Value-Sets.png)
+
 ---
  
 ## Value Set Types in Oracle Fusion HCM
@@ -147,10 +147,9 @@ A subset value set reuses an existing independent value set but limits it to a d
    - Sequencing rules
    - Default values
 ### Video Tutorial
- 
+
 {% youtube 7RVR5lg6zf8 %}
-*[https://www.youtube.com/watch?v=7RVR5lg6zf8]*
- 
+*[https://www.youtube.com/watch?v=7RVR5lg6zf8]* 
 ---
  
 ## Value Set Security: Controlling User Access
