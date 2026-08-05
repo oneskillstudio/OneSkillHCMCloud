@@ -5,21 +5,22 @@ const isActive = (path: string) => pathname === path || (path !== '/' && pathnam
 
 <header class="site-header">
   <div class="container header-inner">
-    <a href="/" class="brand" aria-label="GrowCloudSkills, home">
+    <a href="/" class="brand" aria-label="OneSkill Studio, home">
       <img
         class="brand-logo"
         src="/images/brand/GCS-Brand-logo.jpg"
-        alt="GrowCloudSkills"
+        alt="OneSkill Studio"
         width="620" height="247"
       />
     </a>
-<nav class="nav">
-  <a href="/" class={isCurrentPage('/') ? 'active' : ''}>Home</a>
-  <a href="/technical" class={isCurrentPage('/technical') ? 'active' : ''}>Technical</a>
-  <a href="/functional" class={isCurrentPage('/functional') ? 'active' : ''}>Functional</a>
-  <a href="/trainings" class={isCurrentPage('/trainings') ? 'active' : ''}>Trainings</a>
-  <a href="/about" class={isCurrentPage('/about') ? 'active' : ''}>About</a>
-</nav>
+
+    <nav class="nav">
+      <a href="/" class={isActive('/') ? 'active' : ''}>Home</a>
+      <a href="/technical" class={isActive('/technical') ? 'active' : ''}>Technical</a>
+      <a href="/functional" class={isActive('/functional') ? 'active' : ''}>Functional</a>
+      <a href="/trainings" class={isActive('/trainings') ? 'active' : ''}>Trainings</a>
+      <a href="/about" class={isActive('/about') ? 'active' : ''}>About</a>
+    </nav>
   </div>
 </header>
 
@@ -33,6 +34,7 @@ const isActive = (path: string) => pathname === path || (path !== '/' && pathnam
     top: 0;
     z-index: 50;
   }
+
   .header-inner {
     display: flex;
     align-items: center;
@@ -40,14 +42,17 @@ const isActive = (path: string) => pathname === path || (path !== '/' && pathnam
     gap: 2rem;
     padding-block: 1.1rem;
   }
+
   .brand-logo {
     display: block;
     height: 48px;
     width: auto;
   }
+
   @media (max-width: 640px) {
     .brand-logo { height: 38px; }
   }
+
   .brand {
     display: flex;
     align-items: center;
@@ -55,7 +60,9 @@ const isActive = (path: string) => pathname === path || (path !== '/' && pathnam
     color: var(--ink-strong);
     border: none;
   }
+
   .brand:hover { border: none; }
+
   .brand-mark {
     display: inline-flex;
     align-items: center;
@@ -70,6 +77,7 @@ const isActive = (path: string) => pathname === path || (path !== '/' && pathnam
     letter-spacing: -0.02em;
     border-radius: 50%;
   }
+
   .brand-name {
     font-family: var(--font-display);
     font-weight: 700;
@@ -77,11 +85,13 @@ const isActive = (path: string) => pathname === path || (path !== '/' && pathnam
     color: var(--ink-strong);
     letter-spacing: -0.01em;
   }
+
   .nav {
     display: flex;
     gap: 2.2rem;
     align-items: center;
   }
+
   .nav a {
     font-family: var(--font-display);
     font-size: 0.92rem;
@@ -92,8 +102,11 @@ const isActive = (path: string) => pathname === path || (path !== '/' && pathnam
     position: relative;
     transition: color 0.2s ease;
   }
+
   .nav a:hover { color: var(--ink); border: none; }
+
   .nav a.active { color: var(--ink-strong); font-weight: 600; }
+
   .nav a.active::after {
     content: '';
     position: absolute;
@@ -103,6 +116,7 @@ const isActive = (path: string) => pathname === path || (path !== '/' && pathnam
     height: 2px;
     background: var(--orange);
   }
+
   @media (max-width: 640px) {
     .header-inner { padding-block: 0.9rem; }
     .nav { gap: 1.5rem; }
