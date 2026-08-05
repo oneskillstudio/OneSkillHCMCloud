@@ -5,7 +5,7 @@ description: "Oracle HCM Cloud Fast Formula: Regular and OT Bucket Allocation in
 tags: ["Fast Formula", "Oracle HCM Cloud", "Time & Labor"]
 author: "Vaibhav Chavan"
 draft: false
-category: "Functional"
+category: "Technical"
 ---
 
 <div style="font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif; max-width: 820px; margin: 0 auto; color: #2d2926; line-height: 1.65; font-size: 17px;">
