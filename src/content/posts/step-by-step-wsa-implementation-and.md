@@ -3,8 +3,9 @@ title: "Step-by-step WSA implementation and complete code of Oracle HCM Cloud HD
 pubDate: 2026-03-27
 description: "Step-by-step WSA implementation and complete code of Oracle HCM Cloud HDL Transformation Fast Formula — WSA_EXISTS, WSA_GET, WSA_SET for Person caching..."
 tags: ["Fast Formula", "HDL", "Oracle HCM Cloud"]
-author: "Abhishek Mohanty"
+author: "Vaibhav Chavan"
 draft: false
+category: "Technical"
 ---
 
 <!DOCTYPE html>
