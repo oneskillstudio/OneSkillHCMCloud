@@ -6,7 +6,7 @@ export async function GET(context) {
   const sorted = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
   return rss({
-    title: 'Abhishek Mohanty — Oracle HCM Cloud Notes',
+    title: 'Vaibhav Chavan — Oracle HCM Cloud Notes',
     description:
       'Field notes from a decade in the Oracle HCM Cloud trenches — Fast Formulas, Absence Management, Time and Labor, Redwood, HDL, OTBI.',
     site: context.site,
