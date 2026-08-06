@@ -9,7 +9,7 @@ const posts = defineCollection({
     updatedDate: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
     module: z.string().optional(), // e.g. "Absence Management", "Time and Labor"
-    category: z.enum(['Technical', 'Functional']).optional(),
+    category: z.enum(['Technical', 'Functional', 'Trainings']).optional(),
     draft: z.boolean().default(false),
   }),
 });
