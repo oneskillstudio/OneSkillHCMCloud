@@ -1,6 +1,4 @@
 ---
-const { pathname } = Astro.url;
-const isActive = (path: string) => pathname === path || (path !== '/' && pathname.startsWith(path));
 ---
 
 <header class="site-header">
@@ -10,29 +8,75 @@ const isActive = (path: string) => pathname === path || (path !== '/' && pathnam
         class="brand-logo"
         src="/images/brand/GCS-Brand-logo.jpg"
         alt="OneSkill Studio"
-        width="620" height="247"
+        width="620"
+        height="247"
       />
     </a>
-
     <nav class="nav">
-      <a href="/" class={isActive('/') ? 'active' : ''}>Home</a>
-      <a href="/technical" class={isActive('/technical') ? 'active' : ''}>Technical</a>
-      <a href="/functional" class={isActive('/functional') ? 'active' : ''}>Functional</a>
-      <a href="/trainings" class={isActive('/trainings') ? 'active' : ''}>Trainings</a>
-      <a href="/about" class={isActive('/about') ? 'active' : ''}>About</a>
+      <a href="/" class={Astro.url.pathname === '/' ? 'active' : ''}>Home</a>
+      <a href="/technical" class={Astro.url.pathname.startsWith('/technical') ? 'active' : ''}>Technical</a>
+      <a href="/functional" class={Astro.url.pathname.startsWith('/functional') ? 'active' : ''}>Functional</a>
+      <a href="/trainings" class={Astro.url.pathname.startsWith('/trainings') ? 'active' : ''}>Trainings</a>
+      <a href="/about" class={Astro.url.pathname.startsWith('/about') ? 'active' : ''}>About</a>
     </nav>
   </div>
 </header>
 
+<script>
+  let lastScrollTop = 0;
+  let ticking = false;
+  const header = document.querySelector('.site-header');
+  
+  function updateHeaderVisibility() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    
+    // Hide header when scrolling down past 300px (half page)
+    if (scrollTop > 300) {
+      if (scrollTop > lastScrollTop) {
+        // Scrolling DOWN
+        header?.classList.add('hide');
+      } else {
+        // Scrolling UP
+        header?.classList.remove('hide');
+      }
+    } else {
+      // At top of page - always show
+      header?.classList.remove('hide');
+    }
+    
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+    ticking = false;
+  }
+  
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(updateHeaderVisibility);
+      ticking = true;
+    }
+  });
+</script>
+
 <style>
   .site-header {
-    border-bottom: 1px solid var(--border);
-    background: rgba(251, 249, 245, 0.9);
+    border-bottom: 1px solid #D1E0ED;
+    background: #FFFFFF;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     position: sticky;
     top: 0;
     z-index: 50;
+    transition: transform 0.3s ease-out;
+  }
+
+  /* Hide on scroll */
+  .site-header.hide {
+    transform: translateY(-100%);
+  }
+
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 24px;
   }
 
   .header-inner {
@@ -40,28 +84,35 @@ const isActive = (path: string) => pathname === path || (path !== '/' && pathnam
     align-items: center;
     justify-content: space-between;
     gap: 2rem;
-    padding-block: 1.1rem;
+    padding-block: 0.88rem; /* Reduced from 1.1rem (20% reduction) */
   }
 
   .brand-logo {
     display: block;
-    height: 48px;
+    height: 40px; /* Reduced from 48px */
     width: auto;
   }
 
   @media (max-width: 640px) {
-    .brand-logo { height: 38px; }
+    .brand-logo {
+      height: 30px; /* Reduced from 38px */
+    }
   }
 
   .brand {
     display: flex;
     align-items: center;
     gap: 0.7rem;
-    color: var(--ink-strong);
+    color: #0F3B66; /* Teal + Blue: text-strong */
+    text-decoration: none;
     border: none;
+    transition: color 0.2s ease;
   }
 
-  .brand:hover { border: none; }
+  .brand:hover {
+    color: #06B6D4; /* Accent teal on hover */
+    border: none;
+  }
 
   .brand-mark {
     display: inline-flex;
@@ -69,9 +120,9 @@ const isActive = (path: string) => pathname === path || (path !== '/' && pathnam
     justify-content: center;
     width: 32px;
     height: 32px;
-    background: var(--bg-dark);
+    background: linear-gradient(135deg, #0F3B66, #06B6D4);
     color: white;
-    font-family: var(--font-display);
+    font-family: system-ui, -apple-system, sans-serif;
     font-weight: 800;
     font-size: 0.78rem;
     letter-spacing: -0.02em;
@@ -79,10 +130,10 @@ const isActive = (path: string) => pathname === path || (path !== '/' && pathnam
   }
 
   .brand-name {
-    font-family: var(--font-display);
+    font-family: system-ui, -apple-system, sans-serif;
     font-weight: 700;
     font-size: 1.02rem;
-    color: var(--ink-strong);
+    color: #0F3B66;
     letter-spacing: -0.01em;
   }
 
@@ -93,19 +144,26 @@ const isActive = (path: string) => pathname === path || (path !== '/' && pathnam
   }
 
   .nav a {
-    font-family: var(--font-display);
+    font-family: system-ui, -apple-system, sans-serif;
     font-size: 0.92rem;
     font-weight: 500;
-    color: var(--ink-muted);
+    color: #334155; /* Teal + Blue: text-muted */
+    text-decoration: none;
     border: none;
     padding: 0.4em 0;
     position: relative;
     transition: color 0.2s ease;
   }
 
-  .nav a:hover { color: var(--ink); border: none; }
+  .nav a:hover {
+    color: #0F3B66; /* text-strong */
+    border: none;
+  }
 
-  .nav a.active { color: var(--ink-strong); font-weight: 600; }
+  .nav a.active {
+    color: #0F3B66; /* text-strong */
+    font-weight: 600;
+  }
 
   .nav a.active::after {
     content: '';
@@ -114,12 +172,43 @@ const isActive = (path: string) => pathname === path || (path !== '/' && pathnam
     right: 0;
     bottom: -2px;
     height: 2px;
-    background: var(--orange);
+    background: #06B6D4; /* Teal accent underline */
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from {
+      width: 0;
+      left: 50%;
+    }
+    to {
+      width: 100%;
+      left: 0;
+    }
   }
 
   @media (max-width: 640px) {
-    .header-inner { padding-block: 0.9rem; }
-    .nav { gap: 1.5rem; }
-    .nav a { font-size: 0.88rem; }
+    .container {
+      padding: 0 16px;
+    }
+
+    .header-inner {
+      padding-block: 0.7rem;
+    }
+
+    .nav {
+      gap: 1.5rem;
+    }
+
+    .nav a {
+      font-size: 0.88rem;
+    }
+  }
+
+  /* Smooth transition for hide/show */
+  @media (prefers-reduced-motion: reduce) {
+    .site-header {
+      transition: none;
+    }
   }
 </style>
