@@ -8,34 +8,9 @@ const allPosts = (await getCollection('posts', ({ data }) => !data.draft))
 const formatShort = (date: Date) =>
   date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
-// Primary category shown on each card.
-// Note: matches whole words, so "patterns" no longer matches "ter".
-const primaryCategory = (tags: string[], title: string): string => {
-  const all = (tags.join(' ') + ' ' + title).toLowerCase();
-  if (all.includes('hdl')) return 'HDL';
-  if (all.includes('benefit')) return 'Benefits';
-  if (all.includes('recruit')) return 'Recruiting';
-  if (all.includes('absence')) return 'Absence';
-  if (
-    all.includes('time and labor') ||
-    all.includes('time & labor') ||
-    all.includes('time entry rule') ||
-    all.includes('time calculation rule') ||
-    all.includes('timecard') ||
-    /\btcr\b/.test(all) ||
-    /\bter\b/.test(all)
-  ) return 'Time & Labor';
-  if (all.includes('null') || all.includes('defaulted')) return 'Null Handling';
-  if (tags.length > 0) return tags[0];
-  return 'Fast Formula';
-};
-
-// Reading time from the post body — 200 wpm, rounded up.
 const readMinutes = (body: string): number =>
   Math.max(1, Math.ceil(body.trim().split(/\s+/).length / 200));
 
-// Depth tier, derived from length as a proxy. Add a `depth` field to the
-// content schema later if you want to set this per post instead.
 const depth = (mins: number) =>
   mins >= 18
     ? { label: 'Deep', bars: '▰▰▰', cls: 'd3' }
@@ -44,447 +19,949 @@ const depth = (mins: number) =>
     : { label: 'Foundational', bars: '▰▱▱', cls: 'd1' };
 
 const featured = allPosts[0];
-const rest = allPosts.slice(1);
+const recent = allPosts.slice(0, 5);
 
 const cardData = (post: typeof allPosts[number]) => {
   const mins = readMinutes(post.body);
-  return { mins, tier: depth(mins), category: primaryCategory(post.data.tags, post.data.title) };
+  return { mins, tier: depth(mins) };
 };
+
+const modules = [
+  { name: 'Core HR', icon: '👥', color: 'blue' },
+  { name: 'Payroll', icon: '💰', color: 'teal' },
+  { name: 'Time & Labor', icon: '⏱️', color: 'blue' },
+  { name: 'Benefits', icon: '🏥', color: 'teal' },
+  { name: 'Recruiting', icon: '📋', color: 'blue' },
+  { name: 'Absence Mgmt', icon: '📅', color: 'teal' },
+];
+
+const paths = [
+  {
+    title: 'Technical',
+    icon: '💻',
+    description: 'Fast Formulas, SQL, HDL, integration patterns',
+    href: '/technical',
+    color: 'primary'
+  },
+  {
+    title: 'Functional',
+    icon: '⚙️',
+    description: 'Configuration, setup, best practices across modules',
+    href: '/functional',
+    color: 'accent'
+  },
+  {
+    title: 'Trainings',
+    icon: '📚',
+    description: 'Step-by-step guides, tutorials, skill development',
+    href: '/trainings',
+    color: 'accent'
+  },
+];
 ---
 
-<BaseLayout title="Home">
+<BaseLayout title="OneSkill Studio - Oracle Fusion HCM Knowledge Hub">
   <div class="hp">
-
-    <!-- ══════════ ARCHITECTURE BAND ══════════ -->
+    <!-- ══════════ HERO BAND ══════════ -->
     <section class="hp-shell">
-      <div class="band">
-        <div class="band-grid">
-          <div>
-            <div class="hp-eyebrow">Oracle HCM Cloud · Technical</div>
-            <h1>Oracle HCM Cloud Fast Formula<br /><span class="accent">Architecture &amp; Design</span></h1>
-
-            <div class="concepts">
-              <div class="concept">
-                <span class="concept-n"><b>1.</b>Formula types &amp; entry points</span>
-                <ul><li>Time FF</li><li>Global FF</li><li>Absence FF</li></ul>
-              </div>
-              <div class="concept">
-                <span class="concept-n"><b>2.</b>Component logic breakdown</span>
-                <ul><li>Loops</li><li>Conditions</li><li>Variables</li></ul>
-              </div>
-              <div class="concept">
-                <span class="concept-n"><b>3.</b>Database item (DBI) access</span>
-                <div class="dbi">PER_PERSON_ID</div>
-                <div class="dbi">ASG_FULL_PART_TIME</div>
-              </div>
-              <div class="concept">
-                <span class="concept-n"><b>4.</b>Context &amp; data flow</span>
-                <ul><li>Context_A</li><li>Context_B</li><li>Evaluations</li></ul>
-              </div>
-            </div>
-
-            <div class="term">
-              <span class="term-glyph" aria-hidden="true">&gt;_</span>
-              <span class="term-text"><span class="br">[</span>formula architecture <span class="lo">&amp;</span> data flow<span class="br">]</span></span>
+      <div class="hero-band">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <div class="hero-eyebrow">Oracle Fusion HCM Cloud</div>
+            <h1>Master Enterprise <span class="accent">HCM Implementation</span></h1>
+            <p class="hero-lead">
+              Deep technical expertise and functional guidance for Oracle Fusion HCM. From Fast Formulas to multi-country architectures, learn production-ready solutions from real implementations.
+            </p>
+            <div class="hero-cta">
+              <a href="#learning-paths" class="btn btn--primary">Explore Learning Paths</a>
+              <a href="/technical" class="btn btn--secondary">Browse Articles</a>
             </div>
           </div>
-
-          <svg class="diagram" viewBox="0 0 620 400" xmlns="http://www.w3.org/2000/svg"
-               role="img" aria-label="Diagram: a Fast Formula reads database items such as PER_PERSON_ID and ASG_FULL_PART_TIME from server nodes, evaluates them against contexts, and returns output.">
-            <defs>
-              <marker id="ah" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
-                <path d="M0,0 L0,7 L7,3.5 z" fill="#184878"></path>
-              </marker>
-              <marker id="ao" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
-                <path d="M0,0 L0,7 L7,3.5 z" fill="#F07818"></path>
-              </marker>
-              <linearGradient id="cloudFill" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#F5FAFF"></stop>
-                <stop offset="1" stop-color="#EAF1F9"></stop>
-              </linearGradient>
-            </defs>
-
-            <g fill="#003060" opacity=".05" font-family="Verdana, sans-serif" font-size="7" letter-spacing="1">
-              <text x="18" y="322">01001100 10110</text>
-              <text x="18" y="336">11010011 00101</text>
-              <text x="18" y="350">00110101 11001</text>
-            </g>
-
-            <path d="M40,72 a15,15 0 0 1 14,-14 a17,17 0 0 1 32,3 a13,13 0 0 1 -3,25 h-30 a15,15 0 0 1 -13,-14 z"
-                  fill="url(#cloudFill)" stroke="#184878" stroke-width="1.3"></path>
-            <text x="63" y="79" text-anchor="middle" font-family="Verdana, sans-serif" font-size="8" font-weight="700" fill="#003060">I / O</text>
-            <text x="63" y="102" text-anchor="middle" font-family="Verdana, sans-serif" font-size="7" fill="#56687E">input · output</text>
-
-            <g stroke="#184878" stroke-width="1.2" fill="#FFFFFF">
-              <ellipse cx="66" cy="150" rx="26" ry="8"></ellipse>
-              <path d="M40,150 v30 a26,8 0 0 0 52,0 v-30" fill="#FFFFFF"></path>
-              <path d="M40,165 a26,8 0 0 0 52,0" fill="none"></path>
-            </g>
-            <g stroke="#184878" stroke-width="1.2" fill="#FFFFFF">
-              <ellipse cx="66" cy="232" rx="26" ry="8"></ellipse>
-              <path d="M40,232 v30 a26,8 0 0 0 52,0 v-30" fill="#FFFFFF"></path>
-              <path d="M40,247 a26,8 0 0 0 52,0" fill="none"></path>
-            </g>
-
-            <path d="M212,132 a34,34 0 0 1 30,-32 a40,40 0 0 1 74,7 a30,30 0 0 1 26,30 a32,32 0 0 1 -8,50 a36,36 0 0 1 -34,26 h-58 a38,38 0 0 1 -36,-30 a34,34 0 0 1 6,-51 z"
-                  fill="url(#cloudFill)" stroke="#003060" stroke-width="1.6"></path>
-            <text x="272" y="152" text-anchor="middle" font-family="Verdana, sans-serif" font-size="10" font-weight="700" fill="#003060">Fast Formula</text>
-            <text x="272" y="167" text-anchor="middle" font-family="Verdana, sans-serif" font-size="8" fill="#56687E">execution engine</text>
-
-            <g>
-              <line x1="235" y1="196" x2="272" y2="181" stroke="#184878" stroke-width="1.6"></line>
-              <line x1="272" y1="181" x2="308" y2="199" stroke="#F07818" stroke-width="1.6"></line>
-              <circle cx="235" cy="196" r="6" fill="#184878"></circle>
-              <circle cx="272" cy="181" r="7" fill="#186090"></circle>
-              <circle cx="308" cy="199" r="6" fill="#F07818"></circle>
-            </g>
-
-            <path class="flow" d="M92,160 C140,150 160,140 196,146" fill="none" stroke="#184878" stroke-width="1.4" marker-end="url(#ah)"></path>
-            <path class="flow" d="M92,244 C142,244 166,214 198,196" fill="none" stroke="#184878" stroke-width="1.4" marker-end="url(#ah)"></path>
-            <path class="flow" d="M88,86 C140,86 168,104 200,124" fill="none" stroke="#F07818" stroke-width="1.4" marker-end="url(#ao)"></path>
-
-            <g>
-              <rect x="108" y="118" width="90" height="15" rx="4" fill="#FFFFFF" stroke="#DCE4EC" stroke-width="1"></rect>
-              <text x="153" y="128.5" text-anchor="middle" font-family="Verdana, sans-serif" font-size="7" font-weight="700" fill="#184878" letter-spacing="-.3">PER_PERSON_ID</text>
-            </g>
-            <g>
-              <rect x="100" y="250" width="118" height="15" rx="4" fill="#FFFFFF" stroke="#DCE4EC" stroke-width="1"></rect>
-              <text x="159" y="260.5" text-anchor="middle" font-family="Verdana, sans-serif" font-size="7" font-weight="700" fill="#184878" letter-spacing="-.3">ASG_FULL_PART_TIME</text>
-            </g>
-
-            <g>
-              <rect x="452" y="44" width="148" height="42" rx="6" fill="#FFFFFF" stroke="#003060" stroke-width="1.3"></rect>
-              <text x="526" y="62" text-anchor="middle" font-family="Verdana, sans-serif" font-size="8" font-weight="700" fill="#003060">SERVER NODES</text>
-              <text x="526" y="76" text-anchor="middle" font-family="Verdana, sans-serif" font-size="7.5" fill="#56687E">(DBI Access)</text>
-            </g>
-            <g>
-              <rect x="452" y="102" width="148" height="40" rx="6" fill="#FFF6EE" stroke="#F07818" stroke-width="1.3"></rect>
-              <text x="526" y="119" text-anchor="middle" font-family="Verdana, sans-serif" font-size="8" font-weight="700" fill="#C05A10">Fast Formula</text>
-              <text x="526" y="132" text-anchor="middle" font-family="Verdana, sans-serif" font-size="7.5" fill="#56687E">(DBI Access)</text>
-            </g>
-            <g>
-              <rect x="452" y="286" width="148" height="42" rx="6" fill="#FFFFFF" stroke="#003060" stroke-width="1.3"></rect>
-              <text x="526" y="304" text-anchor="middle" font-family="Verdana, sans-serif" font-size="8" font-weight="700" fill="#003060">SERVER NODES</text>
-              <text x="526" y="318" text-anchor="middle" font-family="Verdana, sans-serif" font-size="7.5" fill="#56687E">(DBI Access)</text>
-            </g>
-            <g>
-              <rect x="470" y="172" width="60" height="24" rx="4" fill="#FFFFFF" stroke="#184878" stroke-width="1.1"></rect>
-              <text x="500" y="188" text-anchor="middle" font-family="Verdana, sans-serif" font-size="7.5" font-weight="700" fill="#184878">Context_A</text>
-            </g>
-            <g>
-              <rect x="470" y="204" width="118" height="34" rx="4" fill="#F7EFE4" stroke="#C05A10" stroke-width="1.1"></rect>
-              <text x="529" y="219" text-anchor="middle" font-family="Verdana, sans-serif" font-size="7.5" font-weight="700" fill="#C05A10">Context</text>
-              <text x="529" y="231" text-anchor="middle" font-family="Verdana, sans-serif" font-size="7.5" font-weight="700" fill="#C05A10">Evaluations</text>
-            </g>
-
-            <path class="flow" d="M344,140 C392,116 414,80 448,68" fill="none" stroke="#184878" stroke-width="1.4" marker-end="url(#ah)"></path>
-            <path class="flow" d="M348,162 C392,152 412,132 448,124" fill="none" stroke="#F07818" stroke-width="1.4" marker-end="url(#ao)"></path>
-            <path class="flow" d="M344,196 C390,196 424,190 466,186" fill="none" stroke="#184878" stroke-width="1.4" marker-end="url(#ah)"></path>
-            <path class="flow" d="M336,224 C382,240 414,236 466,224" fill="none" stroke="#C05A10" stroke-width="1.4" marker-end="url(#ao)"></path>
-            <path class="flow" d="M318,248 C368,286 412,300 448,304" fill="none" stroke="#184878" stroke-width="1.4" marker-end="url(#ah)"></path>
-
-            <g>
-              <rect x="360" y="92" width="90" height="15" rx="4" fill="#FFFFFF" stroke="#DCE4EC" stroke-width="1"></rect>
-              <text x="405" y="102.5" text-anchor="middle" font-family="Verdana, sans-serif" font-size="7" font-weight="700" fill="#184878" letter-spacing="-.3">PER_PERSON_ID</text>
-            </g>
-            <g>
-              <rect x="348" y="268" width="112" height="15" rx="4" fill="#FFFFFF" stroke="#DCE4EC" stroke-width="1"></rect>
-              <text x="404" y="278.5" text-anchor="middle" font-family="Verdana, sans-serif" font-size="7" font-weight="700" fill="#184878" letter-spacing="-.3">PER_FULL_PART_TIME</text>
-            </g>
-
-            <g>
-              <rect x="326" y="14" width="94" height="52" rx="5" fill="#FFFFFF" stroke="#E6DACA" stroke-width="1" opacity=".97"></rect>
-              <circle cx="339" cy="29" r="3.4" fill="#186090"></circle>
-              <text x="349" y="32" font-family="Verdana, sans-serif" font-size="7.5" fill="#0A2A4A">Time FF</text>
-              <circle cx="339" cy="43" r="3.4" fill="#003060"></circle>
-              <text x="349" y="46" font-family="Verdana, sans-serif" font-size="7.5" fill="#0A2A4A">Global FF</text>
-              <circle cx="339" cy="57" r="3.4" fill="#F07818"></circle>
-              <text x="349" y="60" font-family="Verdana, sans-serif" font-size="7.5" fill="#0A2A4A">Absence FF</text>
-            </g>
-
-            <g>
-              <rect x="150" y="330" width="112" height="34" rx="5" fill="#FFFFFF" stroke="#003060" stroke-width="1.2"></rect>
-              <text x="206" y="345" text-anchor="middle" font-family="Verdana, sans-serif" font-size="7.5" font-weight="700" fill="#003060">Context</text>
-              <text x="206" y="357" text-anchor="middle" font-family="Verdana, sans-serif" font-size="7.5" font-weight="700" fill="#003060">Evaluations</text>
-            </g>
-            <path class="flow" d="M232,262 C222,290 214,312 208,326" fill="none" stroke="#184878" stroke-width="1.4" marker-end="url(#ah)"></path>
-          </svg>
+          
+          <div class="hero-visual">
+            <div class="ecosystem">
+              <div class="core">
+                <div class="core-circle">HCM Cloud</div>
+                <div class="module module-1">Core HR</div>
+                <div class="module module-2">Payroll</div>
+                <div class="module module-3">Time & Labor</div>
+                <div class="module module-4">Benefits</div>
+                <div class="module module-5">Recruiting</div>
+                <div class="module module-6">Absence</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ══════════ FILTER ══════════ -->
-    <div class="filter-wrap">
-      <div class="hp-shell filter-inner">
-        <span class="filter-label">Filter</span>
-        <nav class="filter-scroll" aria-label="Categories">
-          <a href="/" class="chip is-active">All <span class="chip-count">{allPosts.length}</span></a>
-          <a href="/tags/otl" class="chip">OTL</a>
-          <a href="/tags/fast-formula" class="chip">Fast Formula</a>
-          <a href="/tags/hdl" class="chip">HDL</a>
-          <a href="/tags/benefits" class="chip">Benefits</a>
-          <a href="/tags/recruiting" class="chip">Recruiting</a>
-          <a href="/tags/null-handling" class="chip">Null Handling</a>
-        </nav>
+    <!-- ══════════ WHAT IS ORACLE FUSION HCM ══════════ -->
+    <section class="hp-shell section-what">
+      <div class="section-header">
+        <div class="section-kicker">Overview</div>
+        <h2>What is Oracle Fusion HCM Cloud?</h2>
+        <p class="section-lead">
+          Enterprise human capital management system powering global organizations. Unified platform for core HR, payroll, recruiting, benefits, and workforce management at scale.
+        </p>
       </div>
-    </div>
 
-    <!-- ══════════ FEED ══════════ -->
-    <section class="hp-shell feed">
-      <div class="feed-head">
-        <h2>Latest</h2>
-        <span class="feed-count">{allPosts.length} articles</span>
+      <div class="capabilities">
+        <div class="capability">
+          <span class="cap-icon">🌍</span>
+          <h3>Global Scalability</h3>
+          <p>Multi-country, multi-currency implementations spanning APAC, EMEA, Americas with localized compliance</p>
+        </div>
+        <div class="capability">
+          <span class="cap-icon">🔧</span>
+          <h3>Deep Configuration</h3>
+          <p>Flexible architecture with Fast Formulas, HDL, and business rules engine for custom logic</p>
+        </div>
+        <div class="capability">
+          <span class="cap-icon">📊</span>
+          <h3>Real-time Analytics</h3>
+          <p>OTBI reporting, Redwood UI dashboards, and integrated BI for workforce insights</p>
+        </div>
+        <div class="capability">
+          <span class="cap-icon">🔗</span>
+          <h3>Enterprise Integration</h3>
+          <p>REST APIs, HCM Data Loader, and integration frameworks for seamless ecosystem connectivity</p>
+        </div>
+      </div>
+
+      <div class="modules-grid">
+        {modules.map((mod) => (
+          <div class={`module-card module-card--${mod.color}`}>
+            <span class="mod-icon">{mod.icon}</span>
+            <h4>{mod.name}</h4>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ══════════ LEARNING PATHS ══════════ -->
+    <section class="hp-shell section-paths" id="learning-paths">
+      <div class="section-header">
+        <div class="section-kicker">Three Ways to Learn</div>
+        <h2>Choose Your Learning Path</h2>
+        <p class="section-lead">
+          Whether you're diving into code, configuring business processes, or building skills, OneSkill Studio has the deep expertise you need.
+        </p>
+      </div>
+
+      <div class="paths-grid">
+        {paths.map((path) => (
+          <a href={path.href} class={`path-card path-card--${path.color}`}>
+            <div class="path-icon">{path.icon}</div>
+            <h3>{path.title}</h3>
+            <p>{path.description}</p>
+            <span class="path-arrow">Explore →</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- ══════════ WHY ONESKILL ══════════ -->
+    <section class="hp-shell section-why">
+      <div class="section-header">
+        <div class="section-kicker">Expertise</div>
+        <h2>Why OneSkill Studio?</h2>
+      </div>
+
+      <div class="reasons">
+        <div class="reason">
+          <div class="reason-num">1</div>
+          <h3>Production-Grade Solutions</h3>
+          <p>Code and configurations tested on live rollouts across multiple countries and thousands of employees</p>
+        </div>
+        <div class="reason">
+          <div class="reason-num">2</div>
+          <h3>Techno-Functional Edge</h3>
+          <p>Deep enough in code to know why something won't work. Deep enough in business to know what's needed</p>
+        </div>
+        <div class="reason">
+          <div class="reason-num">3</div>
+          <h3>Real-World Context</h3>
+          <p>Learn not just the what, but the why and the edge cases discovered in production implementations</p>
+        </div>
+        <div class="reason">
+          <div class="reason-num">4</div>
+          <h3>Continuously Updated</h3>
+          <p>Latest versions, new features, and emerging patterns documented as they're discovered</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ LATEST ARTICLES ══════════ -->
+    <section class="hp-shell section-articles">
+      <div class="section-header">
+        <div class="section-kicker">Knowledge Base</div>
+        <h2>Latest Articles</h2>
+        <p class="section-lead">
+          {allPosts.length} in-depth guides covering technical implementations, functional configurations, and hands-on tutorials
+        </p>
       </div>
 
       {allPosts.length === 0 ? (
-        <p class="empty">No posts published yet.</p>
+        <p class="empty">No articles published yet. Check back soon!</p>
       ) : (
-        <div class="bento">
+        <div class="articles-grid">
           {featured && (() => {
             const d = cardData(featured);
             return (
-              <a href={`/posts/${featured.slug}`} class="card card--feature">
-                <div class="card-eyebrow"><span class="arrow">&gt;&gt;&gt;</span> {d.category} · Latest</div>
+              <a href={`/posts/${featured.slug}`} class="article-card article-card--featured">
+                <div class="card-badge">Featured</div>
                 <h3>{featured.data.title}</h3>
-                {featured.data.description && <p>{featured.data.description}</p>}
-                <span class="read-cta">Start reading <span aria-hidden="true">→</span></span>
-                <div class="card-foot">
-                  <span class="pill">{d.mins} min</span>
-                  <span class={`pill tier ${d.tier.cls}`}><span class="bars">{d.tier.bars}</span> {d.tier.label}</span>
-                  <span class="pill">{formatShort(featured.data.pubDate)}</span>
+                {featured.data.description && <p class="card-desc">{featured.data.description}</p>}
+                <div class="card-meta">
+                  <span class="meta-item">{d.mins} min read</span>
+                  <span class="meta-item">{formatShort(featured.data.pubDate)}</span>
                 </div>
+                <span class="read-more">Read Article →</span>
               </a>
             );
           })()}
 
-          {rest.map((post) => {
+          {recent.slice(1).map((post) => {
             const d = cardData(post);
             return (
-              <a href={`/posts/${post.slug}`} class="card">
-                <div class="card-eyebrow"><span class="arrow">&gt;&gt;&gt;</span> {d.category}</div>
+              <a href={`/posts/${post.slug}`} class="article-card">
                 <h3>{post.data.title}</h3>
-                {post.data.description && <p>{post.data.description}</p>}
-                <div class="card-foot">
-                  <span class="pill">{d.mins} min</span>
-                  <span class={`pill tier ${d.tier.cls}`}><span class="bars">{d.tier.bars}</span> {d.tier.label}</span>
+                {post.data.description && <p class="card-desc">{post.data.description}</p>}
+                <div class="card-meta">
+                  <span class="meta-item">{d.mins} min</span>
+                  <span class={`meta-item tier ${d.tier.cls}`}>{d.tier.label}</span>
+                  <span class="meta-item">{formatShort(post.data.pubDate)}</span>
                 </div>
               </a>
             );
           })}
         </div>
       )}
+
+      <div class="view-all">
+        <a href="/technical" class="btn btn--primary">View All Articles</a>
+      </div>
     </section>
 
+    <!-- ══════════ CTA SECTION ══════════ -->
+    <section class="hp-shell section-cta">
+      <div class="cta-box">
+        <h2>Ready to deepen your Oracle Fusion HCM expertise?</h2>
+        <p>Start with Technical deep-dives, Functional configurations, or guided Trainings.</p>
+        <div class="cta-buttons">
+          <a href="/technical" class="btn btn--primary">Technical Articles</a>
+          <a href="/functional" class="btn btn--secondary">Functional Guides</a>
+          <a href="/trainings" class="btn btn--secondary">Trainings</a>
+        </div>
+      </div>
+    </section>
   </div>
 </BaseLayout>
 
 <style>
-  /* Scoped under .hp; class names prefixed where global.css already owns them. */
-  .hp{
-    --hp-bg:#FDF6EE; --hp-surface:#FFFFFF; --hp-surface-2:#F7EFE4;
-    --hp-line:#E6DACA; --hp-line-soft:#EFE6D9;
-    --hp-navy:#003060; --hp-ink:#0A2A4A; --hp-dim:#56687E; --hp-faint:#8A98A8;
-    --hp-blue:#184878; --hp-blue-lift:#186090;
-    --hp-orange:#F07818; --hp-orange-dp:#C05A10;
-    --hp-orange-wash:rgba(240,120,24,.09); --hp-orange-edge:rgba(240,120,24,.42);
-    --hp-d1:#0F766E; --hp-d2:#C05A10; --hp-d3:#A3232B;
-    --hp-f:Verdana, Geneva, 'DejaVu Sans', sans-serif;
-
-    background:var(--hp-bg); color:var(--hp-ink);
-    font-family:var(--hp-f); font-size:15px; line-height:1.68;
-    padding-block:26px 0;
-  }
-  .hp *{box-sizing:border-box}
-  .hp-shell{max-width:1180px;margin:0 auto;padding:0 24px}
-
-  /* ── band ── */
-  .band{
-    position:relative;margin:0 0 30px;
-    background:
-      radial-gradient(70% 120% at 88% 20%, rgba(24,72,120,.05), transparent 60%),
-      linear-gradient(180deg,#FFFCF8 0%, var(--hp-surface-2) 100%);
-    border:1px solid var(--hp-line);border-radius:18px;overflow:hidden;
-  }
-  .band::before{
-    content:'';position:absolute;inset:0 0 auto 0;height:3px;
-    background:linear-gradient(90deg,var(--hp-navy) 0%, var(--hp-blue-lift) 46%, var(--hp-orange) 100%);
-  }
-  .band-grid{
-    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);
-    gap:30px;align-items:center;padding:34px 34px 30px;
-  }
-  .hp-eyebrow{
-    background:none;padding:0;border-radius:0;   /* beat global .eyebrow pill */
-    font-size:10.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
-    color:var(--hp-orange-dp);margin-bottom:16px;display:flex;align-items:center;gap:12px;
-  }
-  .hp-eyebrow::after{
-    content:'';height:2px;flex:1;max-width:120px;border-radius:2px;
-    background:linear-gradient(90deg,var(--hp-orange),transparent);
-  }
-  .hp h1{
-    font-family:var(--hp-f);font-weight:700;
-    font-size:clamp(1.6rem,2.9vw,2.3rem);
-    line-height:1.16;letter-spacing:-.035em;color:var(--hp-navy);margin:0 0 20px;
-  }
-  .hp h1 .accent{color:var(--hp-orange)}
-
-  .concepts{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:20px}
-  .concept{
-    background:var(--hp-surface);border:1px solid var(--hp-line);
-    border-radius:9px;padding:11px 11px 12px;
-    transition:border-color .2s ease,transform .2s ease;
-  }
-  .concept:hover{border-color:var(--hp-orange-edge);transform:translateY(-2px)}
-  .concept-n{
-    font-size:9px;font-weight:700;letter-spacing:.07em;color:var(--hp-navy);
-    text-transform:uppercase;line-height:1.35;margin-bottom:7px;display:block;
-  }
-  .concept-n b{color:var(--hp-orange);margin-right:3px}
-  .concept ul{list-style:none;font-size:9.5px;color:var(--hp-dim);line-height:1.75;margin:0;padding:0}
-  .concept li{position:relative;padding-left:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .concept li::before{
-    content:'';position:absolute;left:0;top:7px;width:3px;height:3px;
-    border-radius:50%;background:var(--hp-orange);
-  }
-  .concept .dbi{
-    font-size:8.5px;color:var(--hp-blue);font-weight:700;letter-spacing:-.02em;
-    line-height:1.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  .hp {
+    --primary: #0F3B66;
+    --primary-light: #E8F2F8;
+    --accent: #06B6D4;
+    --accent-light: #CCF0FF;
+    --text-strong: #0F3B66;
+    --text-primary: #1E293B;
+    --text-muted: #334155;
+    --text-faint: #64748B;
+    --surface: #FFFFFF;
+    --bg: #F0F7FB;
+    --border: #D1E0ED;
+    
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.68;
+    padding-block: 0;
   }
 
-  .term{display:flex;align-items:center;gap:11px}
-  .term-glyph{
-    width:34px;height:34px;flex-shrink:0;background:var(--hp-navy);border-radius:7px;
-    display:grid;place-items:center;color:var(--hp-orange);
-    font-size:13px;font-weight:700;letter-spacing:-.08em;
+  .hp * {
+    box-sizing: border-box;
   }
-  .term-text{font-size:14px;font-weight:700;letter-spacing:-.025em;color:var(--hp-navy)}
-  .term-text .br{color:var(--hp-orange)}
-  .term-text .lo{font-weight:400;color:var(--hp-dim)}
 
-  .diagram{width:100%;height:auto;display:block}
-  .flow{stroke-dasharray:5 7;animation:hpflow 2.6s linear infinite}
-  @keyframes hpflow{to{stroke-dashoffset:-24}}
+  .hp-shell {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
 
-  /* ── filter ── */
-  .filter-wrap{
-    position:sticky;top:0;z-index:30;
-    background:rgba(253,246,238,.9);
-    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-    border-top:1px solid var(--hp-line-soft);border-bottom:1px solid var(--hp-line);
-  }
-  .filter-inner{display:flex;align-items:center;gap:14px;padding:12px 24px}
-  .filter-label{
-    font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--hp-faint);white-space:nowrap;flex-shrink:0;
-  }
-  .filter-scroll{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
-  .filter-scroll::-webkit-scrollbar{display:none}
-  .hp .chip{
-    display:inline-flex;align-items:center;gap:7px;
-    padding:8px 14px;border:1px solid var(--hp-line);border-radius:999px;
-    background:var(--hp-surface);color:var(--hp-dim);text-decoration:none;
-    font-size:11.5px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;
-    transition:border-color .18s ease,color .18s ease,background .18s ease;
-  }
-  .hp .chip:hover{color:var(--hp-orange-dp);border-color:var(--hp-orange-edge)}
-  .hp .chip.is-active{background:var(--hp-navy);border-color:var(--hp-navy);color:#fff}
-  .chip-count{font-size:10px;opacity:.6;font-weight:400}
+  /* ═══════════════════════════════════
+     HERO SECTION
+     ═══════════════════════════════════ */
 
-  /* ── feed ── */
-  .feed{padding:38px 24px 80px}
-  .feed-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:20px}
-  .hp .feed-head h2{
-    font-family:var(--hp-f);font-weight:700;font-size:18px;
-    letter-spacing:-.025em;color:var(--hp-navy);margin:0;
+  .hero-band {
+    background: linear-gradient(135deg, rgba(15, 59, 102, 0.03) 0%, rgba(6, 182, 212, 0.03) 100%);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 3rem 0 4rem;
+    position: relative;
   }
-  .feed-count{font-size:11px;color:var(--hp-faint)}
-  .empty{color:var(--hp-faint);font-size:14px}
 
-  .bento{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-  .hp .card{
-    position:relative;display:flex;flex-direction:column;
-    background:var(--hp-surface);border:1px solid var(--hp-line);
-    border-radius:14px;padding:22px;overflow:hidden;text-decoration:none;color:inherit;
-    box-shadow:0 1px 2px rgba(10,42,74,.03);
-    transition:border-color .2s ease,transform .2s ease,box-shadow .2s ease;
+  .hero-band::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
   }
-  .hp .card:hover{
-    border-color:var(--hp-orange-edge);transform:translateY(-2px);
-    box-shadow:0 2px 4px rgba(10,42,74,.04), 0 16px 34px -20px rgba(10,42,74,.28);
-  }
-  .hp .card::after{
-    content:'';position:absolute;inset:0 0 auto 0;height:3px;
-    background:linear-gradient(90deg,var(--hp-navy),var(--hp-orange));
-    opacity:0;transition:opacity .2s ease;
-  }
-  .hp .card:hover::after{opacity:1}
-  .card-eyebrow{
-    font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--hp-orange-dp);margin-bottom:11px;display:flex;align-items:center;gap:7px;
-  }
-  .card-eyebrow .arrow{opacity:.7;letter-spacing:-.06em}
-  .hp .card h3{
-    font-family:var(--hp-f);font-weight:700;letter-spacing:-.028em;line-height:1.28;
-    font-size:15.5px;margin:0 0 9px;color:var(--hp-navy);
-  }
-  .hp .card p{
-    font-size:13px;color:var(--hp-dim);line-height:1.6;margin:0 0 18px;
-    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
-  }
-  .hp .card-foot{
-    font-family:var(--hp-f);          /* global .card-foot forces a mono stack */
-    font-size:inherit;color:inherit;
-    margin-top:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-    padding-top:14px;border-top:1px solid var(--hp-line-soft);
-  }
-  .hp .pill{
-    font-family:var(--hp-f);
-    display:inline-flex;align-items:center;gap:6px;font-size:10.5px;color:var(--hp-dim);
-    background:var(--hp-surface-2);border:1px solid var(--hp-line-soft);
-    border-radius:6px;padding:4px 9px;letter-spacing:-.005em;
-  }
-  .tier .bars{letter-spacing:.06em;font-weight:700}
-  .d1 .bars{color:var(--hp-d1)}
-  .d2 .bars{color:var(--hp-d2)}
-  .d3 .bars{color:var(--hp-d3)}
 
-  .card--feature{
-    grid-column:span 2;grid-row:span 2;padding:30px;
-    background:radial-gradient(78% 64% at 92% 3%, var(--hp-orange-wash), transparent 58%),var(--hp-surface);
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    padding: 4rem 3rem;
   }
-  .hp .card--feature h3{font-size:clamp(1.32rem,2.1vw,1.7rem);line-height:1.16;margin-bottom:14px}
-  .hp .card--feature p{font-size:14px;max-width:48ch;margin-bottom:22px;-webkit-line-clamp:5}
-  .read-cta{
-    display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;
-    letter-spacing:-.01em;color:var(--hp-orange-dp);margin-bottom:20px;transition:gap .2s ease;
-  }
-  .card--feature:hover .read-cta{gap:13px}
 
-  /* ── responsive ── */
-  @media (max-width:1040px){
-    .band-grid{grid-template-columns:1fr;gap:24px;padding:28px 26px 26px}
-    .bento{grid-template-columns:repeat(2,1fr)}
-    .card--feature{grid-column:span 2;grid-row:span 1}
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
-  @media (max-width:720px){
-    .concepts{grid-template-columns:repeat(2,1fr);gap:8px}
+
+  .hero-eyebrow::after {
+    content: '';
+    height: 2px;
+    flex: 1;
+    max-width: 80px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    border-radius: 2px;
   }
-  @media (max-width:600px){
-    .hp-shell{padding:0 16px}
-    .filter-inner,.feed{padding-left:16px;padding-right:16px}
-    .band{border-radius:14px;margin-bottom:24px}
-    .band-grid{padding:22px 18px 20px}
-    .bento{grid-template-columns:1fr;gap:13px}
-    .card--feature{grid-column:span 1;padding:24px}
-    .filter-label{display:none}
-    .term-text{font-size:12.5px}
+
+  .hp h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: var(--text-strong);
+    margin: 0 0 1.5rem;
   }
-  @media (prefers-reduced-motion:reduce){
-    .hp *,.hp *::before,.hp *::after{
-      animation-duration:.001ms !important;animation-iteration-count:1 !important;
-      transition-duration:.001ms !important;
+
+  .hp h1 .accent {
+    color: var(--accent);
+  }
+
+  .hero-lead {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    max-width: 55ch;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.75rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn--primary {
+    background: var(--primary);
+    color: white;
+  }
+
+  .btn--primary:hover {
+    background: var(--text-strong);
+    transform: translateY(-2px);
+  }
+
+  .btn--secondary {
+    background: var(--primary-light);
+    color: var(--primary);
+    border: 1px solid var(--border);
+  }
+
+  .btn--secondary:hover {
+    background: white;
+    border-color: var(--primary);
+  }
+
+  /* Ecosystem Visual */
+  .hero-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ecosystem {
+    width: 100%;
+    height: 350px;
+    position: relative;
+  }
+
+  .core {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .core-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(15, 59, 102, 0.2);
+    z-index: 10;
+  }
+
+  .module {
+    position: absolute;
+    width: 90px;
+    height: 50px;
+    background: var(--surface);
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    text-align: center;
+    padding: 0.5rem;
+  }
+
+  .module-1 { top: 0; left: 50%; transform: translateX(-50%); }
+  .module-2 { top: 30px; right: 0; }
+  .module-3 { bottom: 30px; right: 0; }
+  .module-4 { bottom: 0; left: 50%; transform: translateX(-50%); }
+  .module-5 { bottom: 30px; left: 0; }
+  .module-6 { top: 30px; left: 0; }
+
+  /* ═══════════════════════════════════
+     SECTION STYLES
+     ═══════════════════════════════════ */
+
+  .section-header {
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  .section-kicker {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .hp h2 {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text-strong);
+    margin: 0 0 1rem;
+  }
+
+  .section-lead {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 65ch;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* What Section */
+  .section-what {
+    padding: 4rem 0;
+  }
+
+  .capabilities {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .capability {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.2s ease;
+  }
+
+  .capability:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(6, 182, 212, 0.1);
+  }
+
+  .cap-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .capability h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-strong);
+    margin: 0 0 0.5rem;
+  }
+
+  .capability p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+  }
+
+  .module-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .module-card--blue {
+    border-color: var(--primary);
+    background: var(--primary-light);
+  }
+
+  .module-card--blue:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+
+  .module-card--teal {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .module-card--teal:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .mod-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .module-card h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-strong);
+    margin: 0;
+  }
+
+  /* Learning Paths */
+  .section-paths {
+    padding: 4rem 0;
+  }
+
+  .paths-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .path-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 2.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .path-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .path-card--primary::before {
+    background: linear-gradient(90deg, var(--primary), var(--primary));
+  }
+
+  .path-card--accent::before {
+    background: linear-gradient(90deg, var(--accent), var(--accent));
+  }
+
+  .path-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(6, 182, 212, 0.15);
+  }
+
+  .path-card:hover::before {
+    opacity: 1;
+  }
+
+  .path-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .path-card h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-strong);
+    margin: 0 0 0.75rem;
+  }
+
+  .path-card p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin: 0 0 1.5rem;
+    line-height: 1.6;
+  }
+
+  .path-arrow {
+    font-weight: 600;
+    color: var(--accent);
+    transition: all 0.2s ease;
+  }
+
+  .path-card:hover .path-arrow {
+    transform: translateX(4px);
+    display: inline-block;
+  }
+
+  /* Why Section */
+  .section-why {
+    padding: 4rem 0;
+  }
+
+  .reasons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .reason {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.2s ease;
+  }
+
+  .reason:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .reason-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: 50%;
+    font-weight: 800;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .reason h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-strong);
+    margin: 0 0 0.75rem;
+  }
+
+  .reason p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* Articles Section */
+  .section-articles {
+    padding: 4rem 0;
+  }
+
+  .articles-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .article-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .article-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(6, 182, 212, 0.1);
+  }
+
+  .article-card--featured {
+    grid-row: span 2;
+    padding: 2.5rem;
+    background: linear-gradient(135deg, var(--primary-light) 0%, white 100%);
+  }
+
+  .card-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    width: fit-content;
+  }
+
+  .article-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-strong);
+    margin: 0 0 0.75rem;
+    line-height: 1.35;
+  }
+
+  .article-card--featured h3 {
+    font-size: 1.5rem;
+  }
+
+  .card-desc {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0 0 1rem;
+    flex-grow: 1;
+  }
+
+  .card-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--text-faint);
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .meta-item.tier {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .article-card:hover .read-more {
+    transform: translateX(4px);
+  }
+
+  .view-all {
+    text-align: center;
+  }
+
+  /* CTA Section */
+  .section-cta {
+    padding: 4rem 0 6rem;
+  }
+
+  .cta-box {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border-radius: 16px;
+    padding: 4rem;
+    text-align: center;
+    color: white;
+  }
+
+  .cta-box h2 {
+    color: white;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin-bottom: 1rem;
+  }
+
+  .cta-box p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2rem;
+    max-width: 50ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cta-box .btn--primary {
+    background: white;
+    color: var(--primary);
+  }
+
+  .cta-box .btn--primary:hover {
+    background: var(--primary-light);
+  }
+
+  .cta-box .btn--secondary {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .cta-box .btn--secondary:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  /* ═══════════════════════════════════
+     RESPONSIVE
+     ═══════════════════════════════════ */
+
+  @media (max-width: 1024px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding: 3rem 2rem;
     }
-    .flow{stroke-dasharray:none}
+
+    .articles-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .article-card--featured {
+      grid-row: span 1;
+    }
+
+    .capabilities {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hp-shell {
+      padding: 0 16px;
+    }
+
+    .hero-band {
+      margin: 2rem 0 3rem;
+    }
+
+    .hero-grid {
+      padding: 2rem 1.5rem;
+    }
+
+    .hp h1 {
+      font-size: 1.75rem;
+    }
+
+    .section-paths {
+      padding: 3rem 0;
+    }
+
+    .paths-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .capabilities {
+      grid-template-columns: 1fr;
+    }
+
+    .cta-box {
+      padding: 2.5rem 1.5rem;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+    }
+
+    .cta-box .btn {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hp *,
+    .hp *::before,
+    .hp *::after {
+      transition-duration: 0.001ms !important;
+      animation-duration: 0.001ms !important;
+    }
   }
 </style>
