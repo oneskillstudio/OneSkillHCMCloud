@@ -1,0 +1,294 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('posts');
+const trainingPosts = allPosts
+	.filter(post => post.data.category === 'Trainings')
+	.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
+
+// Get all unique tags from training posts
+const allTags = [...new Set(trainingPosts.flatMap(post => post.data.tags || []))];
+---
+
+<BaseLayout title="Trainings" description="Training materials and learning resources for Oracle Fusion HCM">
+	<div class="container">
+		<div class="section-header">
+			<h1>Trainings</h1>
+			<p class="section-description">
+				Step-by-step training materials, learning guides, and resources 
+				for Oracle Fusion HCM professionals.
+			</p>
+		</div>
+
+		<div class="content-area">
+			<!-- Filter Section -->
+			<aside class="sidebar">
+				<div class="filter-box">
+					<h3>Filter by Topic</h3>
+					<ul class="filter-list">
+						<li>
+							<a href="/trainings" class="filter-link active">
+								All ({trainingPosts.length})
+							</a>
+						</li>
+						{allTags.map(tag => {
+							const postsWithTag = trainingPosts.filter(post => 
+								post.data.tags?.includes(tag)
+							);
+							return (
+								<li>
+									<a href={`/trainings?tag=${tag}`} class="filter-link">
+										{tag} ({postsWithTag.length})
+									</a>
+								</li>
+							);
+						})}
+					</ul>
+				</div>
+			</aside>
+
+			<!-- Posts List -->
+			<main class="posts-main">
+				<div class="posts-grid">
+					{trainingPosts.map(post => (
+						<article class="post-card">
+							<div class="post-header">
+								<span class="category-badge">Training</span>
+								<span class="date">{new Date(post.data.pubDate).toLocaleDateString()}</span>
+							</div>
+							
+							<h2>
+								<a href={`/posts/${post.slug}`}>{post.data.title}</a>
+							</h2>
+							
+							<p class="post-description">{post.data.description}</p>
+							
+							<div class="post-tags">
+								{post.data.tags?.map(tag => (
+									<span class="tag">{tag}</span>
+								))}
+							</div>
+							
+							<a href={`/posts/${post.slug}`} class="read-more">
+								View Training →
+							</a>
+						</article>
+					))}
+				</div>
+
+				{trainingPosts.length === 0 && (
+					<div class="empty-state">
+						<p>No training materials found.</p>
+					</div>
+				)}
+			</main>
+		</div>
+	</div>
+</BaseLayout>
+
+<style>
+	.container {
+		max-width: 1100px;
+		margin: 0 auto;
+		padding: 0 24px;
+	}
+
+	.section-header {
+		margin: 3rem 0 2rem;
+		text-align: center;
+		padding: 0 0 2rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.section-header h1 {
+		font-size: 2.5rem;
+		font-weight: 800;
+		color: var(--ink-strong);
+		margin: 0 0 0.5rem;
+	}
+
+	.section-description {
+		font-size: 1.05rem;
+		color: var(--ink-muted);
+		max-width: 600px;
+		margin: 0 auto;
+		line-height: 1.6;
+	}
+
+	.content-area {
+		display: grid;
+		grid-template-columns: 220px 1fr;
+		gap: 2rem;
+		margin: 2rem 0;
+	}
+
+	.sidebar {
+		position: sticky;
+		top: 80px;
+		height: fit-content;
+	}
+
+	.filter-box {
+		background: var(--bg-elevated);
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		padding: 1.5rem;
+	}
+
+	.filter-box h3 {
+		font-size: 14px;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--secondary);
+		margin: 0 0 1rem;
+	}
+
+	.filter-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.filter-list li {
+		margin-bottom: 0.5rem;
+	}
+
+	.filter-link {
+		display: block;
+		font-size: 13px;
+		color: var(--ink-muted);
+		text-decoration: none;
+		padding: 6px 10px;
+		border-radius: 4px;
+		transition: all 0.15s;
+	}
+
+	.filter-link:hover,
+	.filter-link.active {
+		color: var(--secondary);
+		background: var(--secondary-soft);
+	}
+
+	.posts-main {
+		flex: 1;
+	}
+
+	.posts-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.5rem;
+	}
+
+	.post-card {
+		background: var(--bg-elevated);
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		padding: 1.5rem;
+		transition: all 0.2s;
+	}
+
+	.post-card:hover {
+		border-color: var(--secondary);
+		box-shadow: 0 8px 30px rgba(255, 124, 65, 0.1);
+		transform: translateY(-2px);
+	}
+
+	.post-header {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	.category-badge {
+		background: var(--secondary-soft);
+		color: var(--secondary-dark);
+		font-size: 11px;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		padding: 3px 10px;
+		border-radius: 99px;
+	}
+
+	.date {
+		font-size: 12px;
+		color: var(--ink-faint);
+		font-family: var(--font-mono);
+	}
+
+	.post-card h2 {
+		font-size: 1.4rem;
+		font-weight: 700;
+		color: var(--ink-strong);
+		margin: 0 0 0.75rem;
+		line-height: 1.35;
+	}
+
+	.post-card h2 a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.post-card h2 a:hover {
+		color: var(--secondary);
+	}
+
+	.post-description {
+		font-size: 14px;
+		color: var(--ink-muted);
+		line-height: 1.6;
+		margin: 0 0 1rem;
+	}
+
+	.post-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin-bottom: 1rem;
+	}
+
+	.tag {
+		font-size: 11px;
+		background: var(--secondary-soft);
+		color: var(--secondary);
+		padding: 3px 8px;
+		border-radius: 4px;
+		font-weight: 600;
+	}
+
+	.read-more {
+		display: inline-block;
+		color: var(--secondary);
+		text-decoration: none;
+		font-weight: 500;
+		font-size: 13px;
+		transition: all 0.2s;
+	}
+
+	.read-more:hover {
+		transform: translateX(4px);
+	}
+
+	.empty-state {
+		text-align: center;
+		padding: 3rem;
+		color: var(--ink-muted);
+	}
+
+	@media (max-width: 768px) {
+		.content-area {
+			grid-template-columns: 1fr;
+		}
+
+		.sidebar {
+			position: static;
+		}
+
+		.section-header h1 {
+			font-size: 1.8rem;
+		}
+	}
+</style>
